@@ -1,0 +1,576 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie格式转换工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus,
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-convert {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-convert:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-reverse {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-reverse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-clear {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-clear:hover {
+            background: #5a6268;
+        }
+
+        .btn-copy {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #218838;
+        }
+
+        .info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .info h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .info ul {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .info li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🍪 Cookie格式转换工具</h1>
+
+        <div class="info">
+            <h3>📌 使用说明</h3>
+            <ul>
+                <li>将Cookie格式转换为快手API参数格式</li>
+                <li>Cookie字段必填，Salt和Kaw可选</li>
+                <li>自动进行URL解码处理(如 %2C → ,)</li>
+                <li>转换后的格式使用分号(;)分隔，无空格</li>
+                <li>保持参数原始顺序，kaw和salt在最后</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <label for="input">Cookie字符串 <span style="color:red;">*</span>:</label>
+            <textarea id="input" placeholder=""></textarea>
+        </div>
+
+        <div class="section">
+            <label for="salt">Salt (可选，如Cookie中有则替换):</label>
+            <input type="text" id="salt" placeholder="">
+        </div>
+
+        <div class="section">
+            <label for="kaw">Kaw (可选，如Cookie中有则替换):</label>
+            <input type="text" id="kaw" placeholder="">
+        </div>
+
+        <div class="button-group">
+            <button class="btn-convert" onclick="convertCookieToParams()">🔄 转换</button>
+            <button class="btn-copy" onclick="copyResult()">📋 复制结果</button>
+            <button class="btn-clear" onclick="clearAll()">🗑️ 清空</button>
+        </div>
+
+        <div class="section">
+            <div
+                style="background: #f0f9ff; padding: 12px; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #0369a1;">🔒 唯一性保证:</strong>
+                        <span id="uniqueCount" style="color: #0c4a6e; margin-left: 10px;">已生成 0 个唯一ID</span>
+                    </div>
+                    <button onclick="clearHistory()"
+                        style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 12px;">清除历史</button>
+                </div>
+            </div>
+            <label for="output">转换结果:</label>
+            <textarea id="output" readonly placeholder="转换结果将显示在这里..."></textarea>
+        </div>
+    </div>
+
+    <script>
+        // 解析参数字符串
+        function parseParams(str) {
+            const params = {};
+            const pairs = str.split(/;\s*/).filter(p => p.trim());
+
+            pairs.forEach(pair => {
+                const index = pair.indexOf('=');
+                if (index !== -1) {
+                    const key = pair.substring(0, index).trim();
+                    const value = pair.substring(index + 1);
+                    if (key) {
+                        params[key] = value;
+                    }
+                }
+            });
+
+            return params;
+        }
+
+        // 真实设备数据库
+        const REAL_DEVICES = [
+            {
+                brand: 'Xiaomi',
+                model: 'Mi 10 Pro',
+                fullModel: 'Xiaomi(Mi 10 Pro)',
+                soc: 'Qualcomm Snapdragon 865',
+                socEncoded: 'Qualcomm%20Snapdragon%20865',
+                platform: 'kona',
+                ram: '8192',
+                apiLevel: '33',
+                sys: 'ANDROID_13',
+                sh: '2340',
+                sw: '1080',
+                ddpi: '440',
+                abi: 'arm64'
+            },
+            {
+                brand: 'Xiaomi',
+                model: 'Mi 11 Ultra',
+                fullModel: 'Xiaomi(Mi 11 Ultra)',
+                soc: 'Qualcomm Snapdragon 888',
+                socEncoded: 'Qualcomm%20Snapdragon%20888',
+                platform: 'lahaina',
+                ram: '12288',
+                apiLevel: '34',
+                sys: 'ANDROID_14',
+                sh: '3200',
+                sw: '1440',
+                ddpi: '515',
+                abi: 'arm64'
+            },
+            {
+                brand: 'Xiaomi',
+                model: 'Redmi K40 Pro',
+                fullModel: 'Xiaomi(Redmi K40 Pro)',
+                soc: 'Qualcomm Snapdragon 888',
+                socEncoded: 'Qualcomm%20Snapdragon%20888',
+                platform: 'lahaina',
+                ram: '8192',
+                apiLevel: '33',
+                sys: 'ANDROID_13',
+                sh: '2400',
+                sw: '1080',
+                ddpi: '395',
+                abi: 'arm64'
+            },
+            {
+                brand: 'HUAWEI',
+                model: 'Mate 40 Pro',
+                fullModel: 'HUAWEI(Mate 40 Pro)',
+                soc: 'HiSilicon Kirin 9000',
+                socEncoded: 'HiSilicon%20Kirin%209000',
+                platform: 'kirin9000',
+                ram: '8192',
+                apiLevel: '33',
+                sys: 'ANDROID_13',
+                sh: '2772',
+                sw: '1344',
+                ddpi: '456',
+                abi: 'arm64'
+            },
+            {
+                brand: 'OPPO',
+                model: 'Find X5 Pro',
+                fullModel: 'OPPO(Find X5 Pro)',
+                soc: 'Qualcomm Snapdragon 8 Gen 1',
+                socEncoded: 'Qualcomm%20Snapdragon%208%20Gen%201',
+                platform: 'taro',
+                ram: '12288',
+                apiLevel: '34',
+                sys: 'ANDROID_14',
+                sh: '3216',
+                sw: '1440',
+                ddpi: '525',
+                abi: 'arm64'
+            },
+            {
+                brand: 'vivo',
+                model: 'X90 Pro',
+                fullModel: 'vivo(X90 Pro)',
+                soc: 'MediaTek Dimensity 9200',
+                socEncoded: 'MediaTek%20Dimensity%209200',
+                platform: 'mt6985',
+                ram: '12288',
+                apiLevel: '34',
+                sys: 'ANDROID_14',
+                sh: '2800',
+                sw: '1260',
+                ddpi: '452',
+                abi: 'arm64'
+            }
+        ];
+
+        // 生成UUID v4
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // 初始化唯一ID计数器
+        let idCounter = parseInt(localStorage.getItem('deviceIdCounter') || '0');
+        const sessionId = Date.now().toString(36); // 会话ID
+
+        // 生成绝对唯一的设备ID（基于时间戳+UUID+计数器）
+        function generateUniqueDeviceId() {
+            let id;
+            let attempts = 0;
+            const maxAttempts = 100;
+
+            // 获取已生成的ID历史
+            const usedIds = JSON.parse(localStorage.getItem('usedDeviceIds') || '[]');
+
+            do {
+                // 组合：时间戳(13位) + 计数器 + 随机UUID片段
+                const timestamp = Date.now().toString(16); // 时间戳转16进制
+                idCounter++;
+                const counter = idCounter.toString(16).padStart(4, '0'); // 计数器
+                const uuid = generateUUID().replace(/-/g, '').substring(0, 8); // UUID片段
+
+                // 组合成16位唯一ID
+                id = (timestamp + counter + uuid).substring(0, 16);
+
+                attempts++;
+            } while (usedIds.includes(id) && attempts < maxAttempts);
+
+            // 保存到已使用列表（只保留最近10000个，避免存储过大）
+            usedIds.push(id);
+            if (usedIds.length > 10000) {
+                usedIds.shift();
+            }
+            localStorage.setItem('usedDeviceIds', JSON.stringify(usedIds));
+            localStorage.setItem('deviceIdCounter', idCounter.toString());
+
+            return id;
+        }
+
+        // 生成真实格式的Android设备ID（确保唯一）
+        function generateRealDeviceId() {
+            return generateUniqueDeviceId();
+        }
+
+        // 生成真实的ANDROID_ID格式（确保唯一）
+        function generateAndroidId() {
+            return 'ANDROID_' + generateRealDeviceId();
+        }
+
+        // iOS 转 Android（使用真实设备指纹）
+        function iosToAndroid(params) {
+            // 随机选择一个真实设备
+            const device = REAL_DEVICES[Math.floor(Math.random() * REAL_DEVICES.length)];
+
+            // 生成真实格式的设备ID
+            const did = generateAndroidId();
+            const oDid = generateAndroidId();
+            const rdid = generateAndroidId();
+
+            // 生成合理的时间戳（当前时间前后随机偏移）
+            const now = Date.now();
+            const coldLaunchTime = now - Math.floor(Math.random() * 30000); // 启动时间在30秒内
+
+            // 根据设备计算合理的内存值
+            const maxMemory = Math.floor(parseInt(device.ram) / 48).toString(); // 约1/48的总内存
+
+            // 随机运营商
+            const isps = ['CMCC', 'CUCC', 'CTCC'];
+            const isp = params.isp || isps[Math.floor(Math.random() * isps.length)];
+
+            // 随机网络类型
+            const nets = ['WIFI', '4G', '5G'];
+            const net = nets[Math.floor(Math.random() * nets.length)];
+
+            // 随机渠道
+            const channels = [
+                'ALI_CPD,778',
+                'XIAOMI,100',
+                'HUAWEI,200',
+                'OPPO,300',
+                'VIVO,400',
+                'MEIZU,500'
+            ];
+            const channel = channels[Math.floor(Math.random() * channels.length)];
+
+            const androidParams = {
+                'kpn': 'NEBULA',
+                'kpf': 'ANDROID_PHONE',
+                'did': did,
+                'oDid': oDid,
+                'ud': params.ud || params.userId || '',
+                'androidApiLevel': device.apiLevel,
+                'userId': params.userId || params.ud || '',
+                'appver': '13.7.40.10539',
+                'ver': '13.7',
+                'nbh': '0',
+                'kcv': '1602',
+                'did_gt': now.toString(),
+                'os': 'android',
+                'client_key': '2ac2a76d',
+                'kuaishou.api_st': params['kuaishou.api_st'] || params.token || '',
+                'earphoneMode': Math.random() > 0.5 ? '1' : '2',
+                'mod': device.fullModel,
+                'isp': isp,
+                'language': 'zh-cn',
+                'did_tag': '0',
+                'egid': params.egid || params.gid || params.global_id || '',
+                'thermal': (10000 + Math.floor(Math.random() * 2000)).toString(),
+                'net': net,
+                'app': '0',
+                'bottom_navigation': 'true',
+                'android_os': '0',
+                'boardPlatform': device.platform,
+                'newOc': channel,
+                'encoding': 'brotli',
+                'priorityType': '1',
+                'slh': '0',
+                'country_code': 'cn',
+                'hotfix_ver': '',
+                'keyconfig_state': '1',
+                'cdid_tag': '2',
+                'sys': device.sys,
+                'max_memory': maxMemory,
+                'cold_launch_time_ms': coldLaunchTime.toString(),
+                'oc': channel,
+                'sh': device.sh,
+                'deviceBit': '0',
+                'browseType': '3',
+                'ddpi': device.ddpi,
+                'socName': device.socEncoded,
+                'is_background': '0',
+                'c': channel,
+                'sw': device.sw,
+                'ftt': '',
+                'apptype': '22',
+                'abi': 'arm32',
+                'userRecoBit': '0',
+                'device_abi': device.abi,
+                'icaver': '1',
+                'totalMemory': device.ram,
+                'grant_browse_type': 'INITIALIZATION',
+                'iuid': '',
+                'rdid': rdid,
+                'sbh': '90',
+                'darkMode': Math.random() > 0.5 ? 'true' : 'false'
+            };
+
+            // 保持关键认证参数
+            if (params.kaw) androidParams.kaw = params.kaw;
+            if (params.salt) androidParams.salt = params.salt;
+
+            return androidParams;
+        }
+
+        function convertCookieToParams() {
+            const input = document.getElementById('input').value.trim();
+            const saltInput = document.getElementById('salt').value.trim();
+            const kawInput = document.getElementById('kaw').value.trim();
+
+            // 验证必填字段
+            if (!input) {
+                alert('❌ 请输入Cookie字符串！');
+                return;
+            }
+
+            try {
+                const params = parseParams(input);
+
+                // 如果提供了kaw和salt，添加到params
+                if (kawInput) {
+                    params.kaw = kawInput.replace(/^kaw=/i, '');
+                }
+                if (saltInput) {
+                    params.salt = saltInput.replace(/^salt=/i, '');
+                }
+
+                // iOS转Android
+                const result = iosToAndroid(params);
+
+                // 转换为字符串
+                const output = Object.entries(result)
+                    .map(([key, value]) => `${key}=${value}`)
+                    .join(';');
+
+                document.getElementById('output').value = output;
+
+                // 更新唯一ID计数
+                updateUniqueCount();
+            } catch (error) {
+                alert('转换错误: ' + error.message);
+            }
+        }
+
+        function copyResult() {
+            const output = document.getElementById('output');
+            if (!output.value) {
+                alert('❌ 没有可复制的内容！');
+                return;
+            }
+
+            output.select();
+            document.execCommand('copy');
+
+            // 尝试使用新的API
+            try {
+                navigator.clipboard.writeText(output.value);
+            } catch (e) { }
+
+            alert('✅ 已复制到剪贴板！');
+        }
+
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('input').value = '';
+                document.getElementById('salt').value = '';
+                document.getElementById('kaw').value = '';
+                document.getElementById('output').value = '';
+            }
+        }
+
+        // 更新唯一ID计数显示
+        function updateUniqueCount() {
+            const usedIds = JSON.parse(localStorage.getItem('usedDeviceIds') || '[]');
+            const countElement = document.getElementById('uniqueCount');
+            if (countElement) {
+                countElement.textContent = `已生成 ${usedIds.length} 个唯一ID`;
+            }
+        }
+
+        // 清除历史记录
+        function clearHistory() {
+            if (confirm('确定要清除所有ID历史记录吗？\n这将重置唯一性计数器。')) {
+                localStorage.removeItem('usedDeviceIds');
+                localStorage.removeItem('deviceIdCounter');
+                idCounter = 0;
+                updateUniqueCount();
+                alert('✅ 历史记录已清除！');
+            }
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', function () {
+            updateUniqueCount();
+        });
+    </script>
+</body>
+
+</html>
