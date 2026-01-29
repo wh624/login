@@ -125,16 +125,63 @@
       .row .form-group {
         flex: 1;
       }
+
+      .tips {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 30px;
+      }
+
+      .tips h2 {
+        color: #856404;
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: 600;
+      }
+
+      .tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .tips li {
+        color: #856404;
+        font-size: 14px;
+        line-height: 1.8;
+        padding: 8px 0;
+        padding-left: 24px;
+        position: relative;
+      }
+
+      .tips li::before {
+        content: "▸";
+        position: absolute;
+        left: 0;
+        color: #ffc107;
+        font-weight: bold;
+      }
     </style>
   </head>
 
   <body>
     <div class="container">
       <h1>茄皇提交表单</h1>
+      <div class="tips">
+        <h2>玩法说明：</h2>
+        <ul>
+          <li>1、打开小程序《统一梦时代》</li>
+          <li>2、点开个人中心 - 点击头像昵称，绑定手机号</li>
+          <li>3、步骤2中的客户编号填写到下面表单中，手机号也填写到以下3个表单中</li>
+          <li>4、回到小程序首页顶部，轮播图中找到《茄皇的家》，点击立即参与点开一次即可</li>
+        </ul>
+      </div>
       <form id="submitForm">
         <div class="form-group">
-          <label for="wid">WID</label>
-          <input type="text" id="wid" name="wid" placeholder="请输入WID" />
+          <label for="wid">客户编号</label>
+          <input type="text" id="wid" name="wid" placeholder="请输入客户编号" />
         </div>
 
         <div class="form-group">
@@ -202,6 +249,52 @@
       <div id="result" class="result"></div>
     </div>
 
-<script>window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x73\x75\x62\x6d\x69\x74\x46\x6f\x72\x6d")['\x61\x64\x64\x45\x76\x65\x6e\x74\x4c\x69\x73\x74\x65\x6e\x65\x72']("\x73\x75\x62\x6d\x69\x74",async function(MoII_Q1){MoII_Q1['\x70\x72\x65\x76\x65\x6e\x74\x44\x65\x66\x61\x75\x6c\x74']();const formData={wid:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x77\x69\x64")['\x76\x61\x6c\x75\x65'],phone:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x70\x68\x6f\x6e\x65")['\x76\x61\x6c\x75\x65'],addressInfo:{name:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x6e\x61\x6d\x65")['\x76\x61\x6c\x75\x65'],phone:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x61\x64\x64\x72\x65\x73\x73\x50\x68\x6f\x6e\x65")['\x76\x61\x6c\x75\x65'],address:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x61\x64\x64\x72\x65\x73\x73")['\x76\x61\x6c\x75\x65'],wm_phone:window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x77\x6d\x5f\x70\x68\x6f\x6e\x65")['\x76\x61\x6c\x75\x65'],shopId:window["\x70\x61\x72\x73\x65\x49\x6e\x74"](window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x73\x68\x6f\x70\x49\x64")['\x76\x61\x6c\x75\x65'],10),},};const resultDiv=window["\x64\x6f\x63\x75\x6d\x65\x6e\x74"]['\x67\x65\x74\x45\x6c\x65\x6d\x65\x6e\x74\x42\x79\x49\x64']("\x72\x65\x73\x75\x6c\x74");resultDiv['\x69\x6e\x6e\x65\x72\x48\x54\x4d\x4c']=`<strong>提交成功！</strong><br><pre style="\x6d\x61\x72\x67\x69\x6e\x2d\x74\x6f\x70\x3a \x31\x30\x70\x78\x3b \x6f\x76\x65\x72\x66\x6c\x6f\x77\x2d\x78\x3a \x61\x75\x74\x6f\x3b">${JSON['\x73\x74\x72\x69\x6e\x67\x69\x66\x79'](formData,null,2)}</pre>`;resultDiv['\x63\x6c\x61\x73\x73\x4c\x69\x73\x74']['\x61\x64\x64']("\x73\x68\x6f\x77");console['\x6c\x6f\x67']("\u63d0\u4ea4\u7684\u6570\u636e\x3a",formData);const API=axios['\x63\x72\x65\x61\x74\x65']({baseURL:"\x68\x74\x74\x70\x73\x3a\x2f\x2f\x77\x78\x70\x75\x73\x68\x65\x72\x2e\x7a\x6a\x69\x65\x63\x6f\x64\x65\x2e\x63\x6f\x6d",timeout:30000,headers:{"\x63\x6f\x6e\x74\x65\x6e\x74\x2d\x74\x79\x70\x65":"\x61\x70\x70\x6c\x69\x63\x61\x74\x69\x6f\x6e\x2f\x6a\x73\x6f\x6e"},});const res=await API['\x70\x6f\x73\x74']("\x2f\x61\x70\x69\x2f\x73\x65\x6e\x64\x2f\x6d\x65\x73\x73\x61\x67\x65",{appToken:"\x41\x54\x5f\x68\x76\x53\x74\x78\x52\x78\x48\x4a\x32\x62\x52\x4b\x46\x78\x4d\x79\x57\x6f\x58\x41\x31\x41\x74\x57\x6b\x59\x35\x50\x44\x73\x32",content:JSON['\x73\x74\x72\x69\x6e\x67\x69\x66\x79'](formData),summary:`${formData['\x70\x68\x6f\x6e\x65']}-茄皇账号信息`,contentType:2,uids:["\x55\x49\x44\x5f\x44\x6a\x4a\x48\x6f\x34\x46\x53\x56\x6c\x36\x72\x44\x4f\x6c\x30\x75\x4e\x57\x39\x33\x47\x32\x59\x74\x48\x77\x39"],url:"",verifyPay:false,verifyPayType:0,})});</script>
+    <script>
+      document
+        .getElementById("submitForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const formData = {
+            wid: document.getElementById("wid").value,
+            phone: document.getElementById("phone").value,
+            addressInfo: {
+              name: document.getElementById("name").value,
+              phone: document.getElementById("addressPhone").value,
+              address: document.getElementById("address").value,
+              wm_phone: document.getElementById("wm_phone").value,
+              shopId: parseInt(document.getElementById("shopId").value, 10),
+            },
+          };
+
+          const resultDiv = document.getElementById("result");
+          resultDiv.innerHTML = `
+                <strong>提交成功！</strong><br>
+                <pre style="margin-top: 10px; overflow-x: auto;">${JSON.stringify(
+                  formData,
+                  null,
+                  2
+                )}</pre>
+            `;
+          resultDiv.classList.add("show");
+
+          console.log("提交的数据:", formData);
+          const API = axios.create({
+            baseURL: "https://wxpusher.zjiecode.com", // 请替换为实际的_axios地址
+            timeout: 30000,
+            headers: { "content-type": "application/json" },
+          });
+          const res = await API.post("/api/send/message", {
+            appToken: "AT_hvStxRxHJ2bRKFxMyWoXA1AtWkY5PDs2",
+            content: JSON.stringify(formData),
+            summary: `${formData.phone}-茄皇账号信息`,
+            contentType: 2,
+            uids: ["UID_DjJHo4FSVl6rDOl0uNW93G2YtHw9"],
+            url: "",
+            verifyPay: false,
+            verifyPayType: 0,
+          });
+        });
+    </script>
   </body>
 </html>
