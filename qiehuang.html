@@ -136,7 +136,7 @@
 
       .tips h2 {
         color: #856404;
-        margin-bottom: 15px;
+        margin-bottom: 5px;
         font-size: 18px;
         font-weight: 600;
       }
@@ -150,18 +150,123 @@
       .tips li {
         color: #856404;
         font-size: 14px;
-        line-height: 1.8;
-        padding: 8px 0;
-        padding-left: 24px;
         position: relative;
       }
 
-      .tips li::before {
-        content: "▸";
-        position: absolute;
-        left: 0;
-        color: #ffc107;
-        font-weight: bold;
+      .products-container {
+        margin-top: 15px;
+      }
+
+      .products-title {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+
+      .product-item {
+        background: #f8f9fa;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+        position: relative;
+      }
+
+      .product-item:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+      }
+
+      .product-item.active {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+      }
+
+      .product-id {
+        font-size: 12px;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 4px;
+      }
+
+      .product-item.active .product-id {
+        color: white;
+      }
+
+      .product-name {
+        font-size: 13px;
+        color: #333;
+        line-height: 1.4;
+        word-break: break-all;
+      }
+
+      .product-item.active .product-name {
+        color: white;
+      }
+
+      .products-grid::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .products-grid::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 3px;
+      }
+
+      .products-grid::-webkit-scrollbar-thumb {
+        background: #c1c1c1;
+        border-radius: 3px;
+      }
+
+      .products-grid::-webkit-scrollbar-thumb:hover {
+        background: #a1a1a1;
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+
+        .tips {
+          padding: 15px;
+        }
+
+        .tips h2 {
+          font-size: 16px;
+        }
+
+        .tips li {
+          font-size: 13px;
+        }
+
+        .products-grid {
+          grid-template-columns: 1fr;
+          gap: 6px;
+          max-height: 250px;
+        }
+
+        .product-item {
+          padding: 8px 10px;
+        }
       }
     </style>
   </head>
@@ -233,8 +338,12 @@
 
           <div class="form-group">
             <label for="shopId"
-              >兑换id(默认填15，就是牛肉12桶面，具体填写id看群)</label
+              >兑换id</label
             >
+            <div class="products-container">
+              <div class="products-title">点击下方商品自动填写ID：</div>
+              <div class="products-grid" id="productsGrid"></div>
+            </div>
             <input
               type="number"
               id="shopId"
@@ -250,6 +359,56 @@
     </div>
 
     <script>
+      // 商品数据
+      const products = [
+        { id: 2, name: "茄皇家族系列海绵擦*1个（款式随机）" },
+        { id: 3, name: "阳光专列冰箱贴*1个（款式随机）" },
+        { id: 4, name: "茄皇毛绒挂件*1个（款式随机）" },
+        { id: 5, name: "茄皇牛肉面五合一126g×5袋" },
+        { id: 6, name: "茄皇鸡蛋面五合一126g×5袋" },
+        { id: 7, name: "茄皇意式番茄肉酱风味拌面五合一126g×5袋" },
+        { id: 8, name: "茄皇家族系列海绵擦*1套（4个）" },
+        { id: 9, name: "泡面压盲盒*1个（款式随机）" },
+        { id: 11, name: "茄皇牛肉杯面*12杯" },
+        { id: 12, name: "茄皇鸡蛋杯面*12杯" },
+        { id: 13, name: "茄皇捶捶乐*1个（款式随机）" },
+        { id: 14, name: "茄皇鸡蛋桶面*12桶" },
+        { id: 15, name: "茄皇牛肉桶面*12桶" },
+        { id: 16, name: "茄皇意式番茄肉酱风味拌面*12桶" },
+        { id: 18, name: "阳光专列冰箱贴*1套（4个）" },
+        { id: 19, name: "茄皇毛绒挂件*1套（4个）" },
+        { id: 20, name: "泡面压盲盒*1套（4个）" },
+        { id: 21, name: "茄皇积木*1套（4个）" }
+      ];
+
+      // 初始化商品列表
+      function initProducts() {
+        const productsGrid = document.getElementById('productsGrid');
+
+        products.forEach(product => {
+          const item = document.createElement('div');
+          item.className = 'product-item';
+          item.innerHTML = `
+            <div class="product-id">ID: ${product.id}</div>
+            <div class="product-name">${product.name}</div>
+          `;
+
+          item.addEventListener('click', function() {
+            // 移除所有active类
+            document.querySelectorAll('.product-item').forEach(i => i.classList.remove('active'));
+            // 添加当前active类
+            item.classList.add('active');
+            // 填充到输入框
+            document.getElementById('shopId').value = product.id;
+          });
+
+          productsGrid.appendChild(item);
+        });
+      }
+
+      // 页面加载完成后初始化商品列表
+      document.addEventListener('DOMContentLoaded', initProducts);
+
       document
         .getElementById("submitForm")
         .addEventListener("submit", async function (e) {
