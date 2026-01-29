@@ -337,7 +337,7 @@
           </div>
 
           <div class="form-group">
-            <label for="shopId"
+            <label for="shop_id"
               >兑换id(建议选择15，牛肉桶面)</label
             >
             <div class="products-container">
@@ -346,8 +346,8 @@
             </div>
             <input
               type="number"
-              id="shopId"
-              name="shopId"
+              id="shop_id"
+              name="shop_id"
               placeholder="请输入兑换id" />
           </div>
         </div>
@@ -399,7 +399,7 @@
             // 添加当前active类
             item.classList.add('active');
             // 填充到输入框
-            document.getElementById('shopId').value = product.id;
+            document.getElementById('shop_id').value = product.id;
           });
 
           productsGrid.appendChild(item);
@@ -422,7 +422,7 @@
               phone: document.getElementById("addressPhone").value,
               address: document.getElementById("address").value,
               wm_phone: document.getElementById("wm_phone").value,
-              shopId: parseInt(document.getElementById("shopId").value, 10),
+              shop_id: parseInt(document.getElementById("shop_id").value, 10),
             },
           };
 
